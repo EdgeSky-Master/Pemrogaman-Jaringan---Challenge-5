@@ -28,7 +28,8 @@ class Server:
             for s in inputready:
                 if s == self.server:
                     # handle the server socket
-                    c = Client(self.server.accept())
+                    client, address = self.server.accept()
+                    c = Client(client, address, self)
                     c.start()
                     self.threads.append(c)
                 elif s == sys.stdin:
@@ -41,12 +42,20 @@ class Server:
         for c in self.threads:
             c.join()
 
+    def broadcast(self, sender, message):
+        for c in self.threads:
+            if c != sender:
+                c.client.send(message)
+            
 class Client(threading.Thread):
-    def __init__(self, (client, address)):
+    def __init__(self, client, address, server):
         threading.Thread.__init__(self)
         self.client = client
         self.address = address
         self.size = 1024
+        self.server = server
+        
+        self.client.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 
     def run(self):
         running = 1
@@ -54,7 +63,7 @@ class Client(threading.Thread):
             data = self.client.recv(self.size)
             print ('recv: ' + str(self.address) + str(data))
             if data:
-                self.client.send(data)
+                self.server.broadcast(self, data)
             else:
                 self.client.close()
                 running = 0
