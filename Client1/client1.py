@@ -13,7 +13,7 @@ def receive_message():
     while True:
         # Receive and print the broadcasted message from the server
         broadcasted_message = client_socket.recv(1024).decode()
-        sys.stdout.write(broadcasted_message)
+        sys.stdout.write('\n' + broadcasted_message)
         sys.stdout.write('\n>>')
 
 def send_message():
