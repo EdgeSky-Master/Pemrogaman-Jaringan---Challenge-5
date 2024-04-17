@@ -33,8 +33,6 @@ def send_message():
                 break
             client_socket.sendall(byte_read.encode())
 
-        # Send a separate message to indicate the end of the file
-        #client_socket.sendall(b'FILE_SENT')
 
 receive_thread = threading.Thread(target=receive_message)
 receive_thread.start()

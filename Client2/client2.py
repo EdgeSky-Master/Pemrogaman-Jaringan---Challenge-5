@@ -33,8 +33,6 @@ def send_message():
                 break
             client_socket.sendall(byte_read.encode())
 
-        # After sending the file contents, send an empty message to trigger the server to broadcast a message
-        #client_socket.sendall(b'FILE_SENT')
 
 receive_thread = threading.Thread(target=receive_message)
 receive_thread.start()
