@@ -43,9 +43,17 @@ class Server:
             c.join()
 
     def broadcast(self, sender, message):
+        
         for c in self.threads:
             if c != sender:
-                c.client.send(message)
+                data = message.decode()
+                sender_address = str(sender.address)
+                broadcast_message = f"{sender_address} has sent:\n{data}"
+                c.client.send(broadcast_message.encode())
+            elif c == sender:
+                
+                notify = f"You have sent:\n{data} to the other clients"
+                c.client.send(notify.encode())
             
 class Client(threading.Thread):
     def __init__(self, client, address, server):
